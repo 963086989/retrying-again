@@ -38,10 +38,10 @@ class RetryerTest {
     @ParameterizedTest
     @MethodSource("errors")
     void testCallDoesNotCatchError(Class<? extends Error> errorClass) {
-        var retryer = RetryerBuilder.newBuilder()
+        Retryer retryer = RetryerBuilder.newBuilder()
                 .retryIfException()
                 .build();
-        var thrower = new Thrower(errorClass, 3);
+        Thrower thrower = new Thrower(errorClass, 3);
 
         assertThatThrownBy(() -> retryer.call(thrower))
                 .isExactlyInstanceOf(errorClass);
@@ -50,10 +50,10 @@ class RetryerTest {
     @ParameterizedTest
     @MethodSource("errors")
     void testRunDoesNotCatchError(Class<? extends Error> errorClass) {
-        var retryer = RetryerBuilder.newBuilder()
+        Retryer retryer = RetryerBuilder.newBuilder()
                 .retryIfException()
                 .build();
-        var thrower = new Thrower(errorClass, 3);
+        Thrower thrower = new Thrower(errorClass, 3);
 
         assertThatThrownBy(() -> retryer.run(thrower))
                 .isExactlyInstanceOf(errorClass);
@@ -74,8 +74,8 @@ class RetryerTest {
     @ParameterizedTest
     @MethodSource("checkedAndUnchecked")
     void testCallThrowsWithNoRetryOnException(Class<? extends Exception> exceptionClass) {
-        var retryer = RetryerBuilder.newBuilder().build();
-        var thrower = new Thrower(exceptionClass, 5);
+        Retryer retryer = RetryerBuilder.newBuilder().build();
+        Thrower thrower = new Thrower(exceptionClass, 5);
 
         assertThatRetryer(retryer)
                 .throwsRetryExceptionCalling(thrower)
@@ -88,8 +88,8 @@ class RetryerTest {
     @ParameterizedTest
     @MethodSource("unchecked")
     void testRunThrowsWithNoRetryOnException(Class<? extends Exception> exceptionClass) {
-        var retryer = RetryerBuilder.newBuilder().build();
-        var thrower = new Thrower(exceptionClass, 5);
+        Retryer retryer = RetryerBuilder.newBuilder().build();
+        Thrower thrower = new Thrower(exceptionClass, 5);
 
         assertThatRetryExceptionThrownBy(() -> retryer.run(thrower))
                 .hasCauseExactlyInstanceOf(exceptionClass)
@@ -102,10 +102,10 @@ class RetryerTest {
     @ParameterizedTest
     @MethodSource("checkedAndUnchecked")
     void testCallThrowsWithRetryOnException(Class<? extends Exception> exceptionClass) throws Exception {
-        var retryer = RetryerBuilder.newBuilder()
+        Retryer retryer = RetryerBuilder.newBuilder()
                 .retryIfExceptionOfType(Exception.class)
                 .build();
-        var thrower = new Thrower(exceptionClass, 5);
+        Thrower thrower = new Thrower(exceptionClass, 5);
         retryer.call(thrower);
         assertThat(thrower.invocations).isEqualTo(5);
     }
@@ -113,10 +113,10 @@ class RetryerTest {
     @ParameterizedTest
     @MethodSource("unchecked")
     void testRunThrowsWithRetryOnException(Class<? extends Exception> exceptionClass) throws Exception {
-        var retryer = RetryerBuilder.newBuilder()
+        Retryer retryer = RetryerBuilder.newBuilder()
                 .retryIfExceptionOfType(Exception.class)
                 .build();
-        var thrower = new Thrower(exceptionClass, 5);
+        Thrower thrower = new Thrower(exceptionClass, 5);
         retryer.run(thrower);
         assertThat(thrower.invocations).isEqualTo(5);
     }
@@ -125,11 +125,11 @@ class RetryerTest {
     @MethodSource("checkedAndUnchecked")
     void testCallThrowsSubclassWithRetryOnException(Class<? extends Exception> exceptionClass) throws Exception {
         @SuppressWarnings("unchecked")
-        var superclass = (Class<? extends Exception>) exceptionClass.getSuperclass();
-        var retryer = RetryerBuilder.newBuilder()
+        Class<? extends Exception> superclass = (Class<? extends Exception>) exceptionClass.getSuperclass();
+        Retryer retryer = RetryerBuilder.newBuilder()
                 .retryIfExceptionOfType(superclass)
                 .build();
-        var thrower = new Thrower(exceptionClass, 5);
+        Thrower thrower = new Thrower(exceptionClass, 5);
         retryer.call(thrower);
         assertThat(thrower.invocations).isEqualTo(5);
     }
@@ -138,11 +138,11 @@ class RetryerTest {
     @MethodSource("unchecked")
     void testRunThrowsSubclassWithRetryOnException(Class<? extends Exception> exceptionClass) throws Exception {
         @SuppressWarnings("unchecked")
-        var superclass = (Class<? extends Exception>) exceptionClass.getSuperclass();
-        var retryer = RetryerBuilder.newBuilder()
+        Class<? extends Exception> superclass = (Class<? extends Exception>) exceptionClass.getSuperclass();
+        Retryer retryer = RetryerBuilder.newBuilder()
                 .retryIfExceptionOfType(superclass)
                 .build();
-        var thrower = new Thrower(exceptionClass, 5);
+        Thrower thrower = new Thrower(exceptionClass, 5);
         retryer.run(thrower);
         assertThat(thrower.invocations).isEqualTo(5);
     }
@@ -150,11 +150,11 @@ class RetryerTest {
     @ParameterizedTest
     @MethodSource("checkedAndUnchecked")
     void testCallThrowsWhenRetriesAreStopped(Class<? extends Exception> exceptionClass) {
-        var retryer = RetryerBuilder.newBuilder()
+        Retryer retryer = RetryerBuilder.newBuilder()
                 .retryIfExceptionOfType(exceptionClass)
                 .withStopStrategy(StopStrategies.stopAfterAttempt(3))
                 .build();
-        var thrower = new Thrower(exceptionClass, 5);
+        Thrower thrower = new Thrower(exceptionClass, 5);
 
         assertThatRetryer(retryer)
                 .throwsRetryExceptionCalling(thrower)
@@ -168,11 +168,11 @@ class RetryerTest {
     @ParameterizedTest
     @MethodSource("unchecked")
     void testRunThrowsWhenRetriesAreStopped(Class<? extends Exception> exceptionClass) {
-        var retryer = RetryerBuilder.newBuilder()
+        Retryer retryer = RetryerBuilder.newBuilder()
                 .retryIfExceptionOfType(exceptionClass)
                 .withStopStrategy(StopStrategies.stopAfterAttempt(3))
                 .build();
-        var thrower = new Thrower(exceptionClass, 5);
+        Thrower thrower = new Thrower(exceptionClass, 5);
 
         assertThatRetryExceptionThrownBy(() -> retryer.run(thrower))
                 .hasCauseExactlyInstanceOf(exceptionClass)
@@ -184,11 +184,11 @@ class RetryerTest {
 
     @Test
     void testCallThatIsInterrupted() {
-        var retryer = RetryerBuilder.newBuilder()
+        Retryer retryer = RetryerBuilder.newBuilder()
                 .retryIfRuntimeException()
                 .withStopStrategy(StopStrategies.stopAfterAttempt(10))
                 .build();
-        var interrupter = new Interrupter(4);
+        Interrupter interrupter = new Interrupter(4);
 
         assertThatThrownBy(() -> retryer.call(interrupter))
                 .isExactlyInstanceOf(InterruptedException.class);
@@ -198,11 +198,11 @@ class RetryerTest {
 
     @Test
     void testRunThatIsInterrupted() {
-        var retryer = RetryerBuilder.newBuilder()
+        Retryer retryer = RetryerBuilder.newBuilder()
                 .retryIfRuntimeException()
                 .withStopStrategy(StopStrategies.stopAfterAttempt(10))
                 .build();
-        var interrupter = new Interrupter(4);
+        Interrupter interrupter = new Interrupter(4);
 
         assertThatThrownBy(() -> retryer.run(interrupter))
                 .isExactlyInstanceOf(InterruptedException.class);
@@ -212,12 +212,12 @@ class RetryerTest {
 
     @Test
     void testCallWhenBlockerIsInterrupted() {
-        var retryer = RetryerBuilder.newBuilder()
+        Retryer retryer = RetryerBuilder.newBuilder()
                 .retryIfException()
                 .withStopStrategy(StopStrategies.stopAfterAttempt(10))
                 .withBlockStrategy(new InterruptingBlockStrategy(3))
                 .build();
-        var thrower = new Thrower(Exception.class, 5);
+        Thrower thrower = new Thrower(Exception.class, 5);
 
         assertThatThrownBy(() -> retryer.call(thrower))
                 .isExactlyInstanceOf(InterruptedException.class);
@@ -227,12 +227,12 @@ class RetryerTest {
 
     @Test
     void testRunWhenBlockerIsInterrupted() {
-        var retryer = RetryerBuilder.newBuilder()
+        Retryer retryer = RetryerBuilder.newBuilder()
                 .retryIfException()
                 .withStopStrategy(StopStrategies.stopAfterAttempt(10))
                 .withBlockStrategy(new InterruptingBlockStrategy(3))
                 .build();
-        var thrower = new Thrower(Exception.class, 5);
+        Thrower thrower = new Thrower(Exception.class, 5);
 
         assertThatThrownBy(() -> retryer.run(thrower))
                 .isExactlyInstanceOf(InterruptedException.class);

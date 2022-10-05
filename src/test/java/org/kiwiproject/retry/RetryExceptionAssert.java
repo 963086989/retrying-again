@@ -31,7 +31,7 @@ class RetryExceptionAssert {
     }
 
     static RetryExceptionAssert assertThatRetryExceptionThrownBy(ThrowableAssert.ThrowingCallable throwingCallable) {
-        var retryException = catchThrowableOfType(throwingCallable, RetryException.class);
+        RetryException retryException = catchThrowableOfType(throwingCallable, RetryException.class);
         return assertThatRetryException(retryException);
     }
 

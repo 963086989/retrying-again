@@ -95,8 +95,8 @@ public final class Retryer {
      */
     public <T> T call(Callable<T> callable) throws RetryException, InterruptedException {
         long startTimeNanos = System.nanoTime();
-        for (var attemptNumber = 1; ; attemptNumber++) {
-            var attempt = call(callable, startTimeNanos, attemptNumber);
+        for (int attemptNumber = 1; ; attemptNumber++) {
+            Attempt<T> attempt = call(callable, startTimeNanos, attemptNumber);
 
             listeners.forEach(listener -> safeInvokeListener(listener, attempt));
 

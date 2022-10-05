@@ -226,7 +226,7 @@ public class RetryerBuilder {
             }
             try {
                 @SuppressWarnings("unchecked")
-                var result = (T) attempt.getResult();
+                T result = (T) attempt.getResult();
                 return delegate.test(result);
             } catch (ClassCastException e) {
                 return false;

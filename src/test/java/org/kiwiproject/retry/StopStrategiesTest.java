@@ -33,7 +33,7 @@ class StopStrategiesTest {
     @ParameterizedTest
     @ValueSource(ints = {2, 3, 42, 65_535, Integer.MAX_VALUE})
     void testNeverStop(int attemptNumber) {
-        var stopStrategy = StopStrategies.neverStop();
+        StopStrategy stopStrategy = StopStrategies.neverStop();
         assertThat(stopStrategy.shouldStop(failedAttempt(attemptNumber, 6546L)))
                 .isFalse();
     }
@@ -45,7 +45,7 @@ class StopStrategiesTest {
             "4, true"
     })
     void testStopAfterAttempt(int attemptNumber, boolean expectedShouldStop) {
-        var stopStrategy = StopStrategies.stopAfterAttempt(3);
+        StopStrategy stopStrategy = StopStrategies.stopAfterAttempt(3);
         assertThat(stopStrategy.shouldStop(failedAttempt(attemptNumber, 6546L)))
                 .isEqualTo(expectedShouldStop);
     }
@@ -64,7 +64,7 @@ class StopStrategiesTest {
             "1001, true"
     })
     void testStopAfterDelayWithTimeUnit(long delaySinceFirstAttempt, boolean expectedShouldStop) {
-        var stopStrategy = StopStrategies.stopAfterDelay(1, TimeUnit.SECONDS);
+        StopStrategy stopStrategy = StopStrategies.stopAfterDelay(1, TimeUnit.SECONDS);
         assertThat(stopStrategy.shouldStop(failedAttempt(2, delaySinceFirstAttempt)))
                 .isEqualTo(expectedShouldStop);
     }

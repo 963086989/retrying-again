@@ -36,7 +36,7 @@ class AttemptTimeLimitersTest {
         Set<Long> threadsUsed = synchronizedSet();
         Callable<Void> callable = newTestCallable(threadsUsed);
 
-        var iterations = 20;
+        int iterations = 20;
         callMultipleTimesWithNewTimeLimiter(callable, 20, AttemptTimeLimitersTest::newFixedTimeLimiter);
 
         assertThat(threadsUsed)
@@ -49,10 +49,10 @@ class AttemptTimeLimitersTest {
         Set<Long> threadsUsed = synchronizedSet();
         Callable<Void> callable = newTestCallable(threadsUsed);
 
-        var numThreads = 3;
-        var executor = Executors.newFixedThreadPool(numThreads);
+        int numThreads = 3;
+        ExecutorService executor = Executors.newFixedThreadPool(numThreads);
 
-        var iterations = 25;
+        int iterations = 25;
         callMultipleTimesWithNewTimeLimiter(callable, iterations, () -> newFixedTimeLimiter(executor));
 
         assertThat(threadsUsed)
@@ -65,7 +65,7 @@ class AttemptTimeLimitersTest {
                                                             Supplier<AttemptTimeLimiter> supplier) throws Exception {
 
         for (int i = 0; i < numIterations; i++) {
-            var timeLimiter = supplier.get();
+            AttemptTimeLimiter timeLimiter = supplier.get();
             timeLimiter.call(callable);
         }
     }
@@ -84,7 +84,7 @@ class AttemptTimeLimitersTest {
 
     private Callable<Void> newTestCallable(Set<Long> threadsUsed) {
         return () -> {
-            var id = Thread.currentThread().getId();
+            long id = Thread.currentThread().getId();
             threadsUsed.add(id);
             return null;
         };

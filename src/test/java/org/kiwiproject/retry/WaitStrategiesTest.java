@@ -35,14 +35,14 @@ class WaitStrategiesTest {
 
     @Test
     void testNoWait() {
-        var noWait = WaitStrategies.noWait();
+        WaitStrategy noWait = WaitStrategies.noWait();
         assertThat(noWait.computeSleepTime(failedAttempt(18, 9879L)))
                 .isZero();
     }
 
     @Test
     void testFixedWait() {
-        var fixedWait = WaitStrategies.fixedWait(1000L, TimeUnit.MILLISECONDS);
+        WaitStrategy fixedWait = WaitStrategies.fixedWait(1000L, TimeUnit.MILLISECONDS);
         assertThat(fixedWait.computeSleepTime(failedAttempt(12, 6546L)))
                 .isEqualTo(1000L);
     }
@@ -61,7 +61,7 @@ class WaitStrategiesTest {
             "3, 700",
     })
     void testIncrementingWait(int attemptNumber, long expectedSleepTime) {
-        var incrementingWait = WaitStrategies.incrementingWait(500L, TimeUnit.MILLISECONDS, 100L, TimeUnit.MILLISECONDS);
+        WaitStrategy incrementingWait = WaitStrategies.incrementingWait(500L, TimeUnit.MILLISECONDS, 100L, TimeUnit.MILLISECONDS);
         assertThat(incrementingWait.computeSleepTime(failedAttempt(attemptNumber, 6546L)))
                 .isEqualTo(expectedSleepTime);
     }
@@ -75,8 +75,8 @@ class WaitStrategiesTest {
 
     @Test
     void testRandomWait() {
-        var randomWait = WaitStrategies.randomWait(1000L, TimeUnit.MILLISECONDS, 2000L, TimeUnit.MILLISECONDS);
-        var times = new HashSet<Long>();
+        WaitStrategy randomWait = WaitStrategies.randomWait(1000L, TimeUnit.MILLISECONDS, 2000L, TimeUnit.MILLISECONDS);
+        HashSet<Long> times = new HashSet<>();
         times.add(randomWait.computeSleepTime(failedAttempt(1, 6546L)));
         times.add(randomWait.computeSleepTime(failedAttempt(1, 6546L)));
         times.add(randomWait.computeSleepTime(failedAttempt(1, 6546L)));
@@ -88,8 +88,8 @@ class WaitStrategiesTest {
 
     @Test
     void testRandomWaitWithoutMinimum() {
-        var randomWait = WaitStrategies.randomWait(2000L, TimeUnit.MILLISECONDS);
-        var times = new HashSet<Long>();
+        WaitStrategy randomWait = WaitStrategies.randomWait(2000L, TimeUnit.MILLISECONDS);
+        HashSet<Long> times = new HashSet<>();
         times.add(randomWait.computeSleepTime(failedAttempt(1, 6546L)));
         times.add(randomWait.computeSleepTime(failedAttempt(1, 6546L)));
         times.add(randomWait.computeSleepTime(failedAttempt(1, 6546L)));
@@ -116,7 +116,7 @@ class WaitStrategiesTest {
     @ParameterizedTest
     @ValueSource(ints = {1, 2, 3, 4, 5, 6})
     void testExponential(int attemptNumber) {
-        var exponentialWait = WaitStrategies.exponentialWait();
+        WaitStrategy exponentialWait = WaitStrategies.exponentialWait();
         assertThat(exponentialWait.computeSleepTime(failedAttempt(attemptNumber, 0)))
                 .isEqualTo((long) Math.pow(2, attemptNumber));
     }
@@ -124,11 +124,11 @@ class WaitStrategiesTest {
     @ParameterizedTest
     @ValueSource(ints = {1, 2, 3, 4, 5, 6, 7, 8})
     void testExponentialWithMaximumWait(int attemptNumber) {
-        var maximumTime = 40;
-        var exponentialWait = WaitStrategies.exponentialWait(maximumTime, TimeUnit.MILLISECONDS);
+        int maximumTime = 40;
+        WaitStrategy exponentialWait = WaitStrategies.exponentialWait(maximumTime, TimeUnit.MILLISECONDS);
 
-        var unadjustedWait = (long) Math.pow(2, attemptNumber);
-        var expectedWait = Math.min(unadjustedWait, maximumTime);
+        long unadjustedWait = (long) Math.pow(2, attemptNumber);
+        long expectedWait = Math.min(unadjustedWait, maximumTime);
 
         assertThat(exponentialWait.computeSleepTime(failedAttempt(attemptNumber, 0)))
                 .isEqualTo(expectedWait);
@@ -137,12 +137,12 @@ class WaitStrategiesTest {
     @ParameterizedTest
     @ValueSource(ints = {1, 2, 3, 4, 5, 6, 7, 8})
     void testExponentialWithMultiplierAndMaximumWait(int attemptNumber) {
-        var multiplier = 1000;
-        var maximumTime = 50000;
-        var exponentialWait = WaitStrategies.exponentialWait(multiplier, maximumTime, TimeUnit.MILLISECONDS);
+        int multiplier = 1000;
+        int maximumTime = 50000;
+        WaitStrategy exponentialWait = WaitStrategies.exponentialWait(multiplier, maximumTime, TimeUnit.MILLISECONDS);
 
-        var unadjustedWait = multiplier * (long) Math.pow(2, attemptNumber);
-        var expectedWait = Math.min(unadjustedWait, maximumTime);
+        long unadjustedWait = multiplier * (long) Math.pow(2, attemptNumber);
+        long expectedWait = Math.min(unadjustedWait, maximumTime);
 
         assertThat(exponentialWait.computeSleepTime(failedAttempt(attemptNumber, 0)))
                 .isEqualTo(expectedWait);
@@ -186,7 +186,7 @@ class WaitStrategiesTest {
             "6, 8"
     })
     void testFibonacci(int attemptNumber, long expectedSleep) {
-        var fibonacciWait = WaitStrategies.fibonacciWait();
+        WaitStrategy fibonacciWait = WaitStrategies.fibonacciWait();
 
         assertThat(fibonacciWait.computeSleepTime(failedAttempt(attemptNumber, 0L)))
                 .isEqualTo(expectedSleep);
@@ -204,7 +204,7 @@ class WaitStrategiesTest {
             "8, 10",
     })
     void testFibonacciWithMaximumWait(int attemptNumber, long expectedSleep) {
-        var fibonacciWait = WaitStrategies.fibonacciWait(10L, TimeUnit.MILLISECONDS);
+        WaitStrategy fibonacciWait = WaitStrategies.fibonacciWait(10L, TimeUnit.MILLISECONDS);
 
         assertThat(fibonacciWait.computeSleepTime(failedAttempt(attemptNumber, 0L)))
                 .isEqualTo(expectedSleep);
@@ -226,7 +226,7 @@ class WaitStrategiesTest {
             "12, 50000",
     })
     void testFibonacciWithMultiplierAndMaximumWait(int attemptNumber, long expectedSleep) {
-        var fibonacciWait = WaitStrategies.fibonacciWait(1000L, 50000L, TimeUnit.MILLISECONDS);
+        WaitStrategy fibonacciWait = WaitStrategies.fibonacciWait(1000L, 50000L, TimeUnit.MILLISECONDS);
 
         assertThat(fibonacciWait.computeSleepTime(failedAttempt(attemptNumber, 0L)))
                 .isEqualTo(expectedSleep);
@@ -262,18 +262,18 @@ class WaitStrategiesTest {
 
     @Test
     void testExceptionWait() {
-        var failedAttempt = failedAttempt(42, 7227);
-        var exceptionWait = WaitStrategies.exceptionWait(RuntimeException.class, zeroSleepFunction());
+        Attempt<Boolean> failedAttempt = failedAttempt(42, 7227);
+        WaitStrategy exceptionWait = WaitStrategies.exceptionWait(RuntimeException.class, zeroSleepFunction());
         assertThat(exceptionWait.computeSleepTime(failedAttempt)).isZero();
 
-        var oneMinuteWait = WaitStrategies.exceptionWait(RuntimeException.class, oneMinuteSleepFunction());
+        WaitStrategy oneMinuteWait = WaitStrategies.exceptionWait(RuntimeException.class, oneMinuteSleepFunction());
         assertThat(oneMinuteWait.computeSleepTime(failedAttempt)).isEqualTo(3600 * 1000L);
 
-        var noMatchRetryAfterWait = WaitStrategies.exceptionWait(RetryAfterException.class, customSleepFunction());
+        WaitStrategy noMatchRetryAfterWait = WaitStrategies.exceptionWait(RetryAfterException.class, customSleepFunction());
         assertThat(noMatchRetryAfterWait.computeSleepTime(failedAttempt)).isZero();
 
-        var retryAfterWait = WaitStrategies.exceptionWait(RetryAfterException.class, customSleepFunction());
-        var failedRetryAfterAttempt = Attempt.<Boolean>newExceptionAttempt(new RetryAfterException(), 42, 7227L);
+        WaitStrategy retryAfterWait = WaitStrategies.exceptionWait(RetryAfterException.class, customSleepFunction());
+        Attempt<Boolean> failedRetryAfterAttempt = Attempt.newExceptionAttempt(new RetryAfterException(), 42, 7227L);
         assertThat(retryAfterWait.computeSleepTime(failedRetryAfterAttempt)).isEqualTo(RetryAfterException.SLEEP_TIME);
     }
 

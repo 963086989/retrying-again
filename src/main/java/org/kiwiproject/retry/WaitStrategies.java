@@ -277,8 +277,8 @@ public final class WaitStrategies {
          method never returns Long.MIN_VALUE to ensure the Math.abs always returns a positive number.
         */
         private static long randomPositiveLong() {
-            var aLong = RANDOM.nextLong();
-            var rand = (aLong == Long.MIN_VALUE) ? MIN_LONG_PLUS_ONE : aLong;
+            long aLong = RANDOM.nextLong();
+            long rand = (aLong == Long.MIN_VALUE) ? MIN_LONG_PLUS_ONE : aLong;
             return Math.abs(rand);
         }
     }
@@ -358,11 +358,11 @@ public final class WaitStrategies {
             if (n == 0L) return 0L;
             if (n == 1L) return 1L;
 
-            var prevPrev = 0L;
-            var prev = 1L;
-            var result = 0L;
+            long prevPrev = 0L;
+            long prev = 1L;
+            long result = 0L;
 
-            for (var i = 2L; i <= n; i++) {
+            for (long i = 2L; i <= n; i++) {
                 result = prev + prevPrev;
                 prevPrev = prev;
                 prev = result;
@@ -383,7 +383,7 @@ public final class WaitStrategies {
 
         @Override
         public long computeSleepTime(Attempt<?> failedAttempt) {
-            var waitTime = 0L;
+            long waitTime = 0L;
             for (WaitStrategy waitStrategy : waitStrategies) {
                 waitTime += waitStrategy.computeSleepTime(failedAttempt);
             }
@@ -405,7 +405,7 @@ public final class WaitStrategies {
         @Override
         public long computeSleepTime(Attempt<?> lastAttempt) {
             if (lastAttempt.hasException()) {
-                var cause = lastAttempt.getException();
+                Exception cause = lastAttempt.getException();
                 if (exceptionClass.isAssignableFrom(cause.getClass())) {
                     return function.apply((T) cause);
                 }
